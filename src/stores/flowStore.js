@@ -21,5 +21,9 @@ export const useFlowStore = defineStore('flow', () => {
     }
   }
 
-  return { nodes, edges, selectedNode, initializeStore }
+  function setSelectedNode(node) {
+    selectedNode.value = node
+  }
+
+  return { nodes, edges, selectedNode, initializeStore, setSelectedNode }
 })
