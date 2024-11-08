@@ -16,8 +16,8 @@
   >
     <div class="divide-y divide-gray-300">
       <div class="flex items-center gap-2 px-4 pb-4">
-        <div :class="['w-8 h-8 rounded-lg flex items-center justify-center bg-purple-100']">
-          <component :is="ClockIcon" class="w-4 h-4 text-purple-600" />
+        <div :class="['w-8 h-8 rounded-lg flex items-center justify-center bg-orange-100']">
+          <component :is="ClockIcon" class="w-4 h-4 text-orange-600" />
         </div>
         <div class="text-sm text-gray-700 capitalize font-semibold">{{ getLabel }}</div>
       </div>
