@@ -1,0 +1,123 @@
+<template>
+  <div class="fixed right-0 top-0 h-full w-96 bg-white shadow-lg p-6 overflow-y-auto">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-bold">Node Details</h2>
+      <button @click="$emit('close')" class="text-gray-500 hover:text-gray-700">
+        <XMarkIcon class="w-6 h-6" />
+      </button>
+    </div>
+
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Title</label>
+        <input
+          v-model="title"
+          class="mt-1 w-full rounded-md border-gray-500 shadow-sm"
+          @change="updateNode"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Description</label>
+        <textarea
+          v-model="description"
+          class="mt-1 w-full rounded-md border-gray-900 shadow-sm"
+          @change="updateNode"
+        />
+      </div>
+
+      <template v-if="node.type === 'sendMessage'">
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">Attachments</label>
+          <div class="grid grid-cols-2 gap-2">
+            <div
+              v-for="(attachment, index) in attachments"
+              :key="index"
+              class="relative aspect-square bg-gray-100 rounded-lg overflow-hidden"
+            >
+              <img :src="attachment" class="w-full h-full object-cover" />
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <template v-if="node.type === 'businessHours'">
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">Business Hours</label>
+          <div v-for="day in businessHours" :key="day.day" class="flex gap-2">
+            <span class="w-20">{{ day.day }}</span>
+            <input type="time" v-model="day.startTime" class="border rounded" />
+            <input type="time" v-model="day.endTime" class="border rounded" />
+          </div>
+        </div>
+      </template>
+
+      <div class="pt-4">
+        <button
+          @click="$emit('delete', node.id)"
+          class="w-full bg-red-500 text-white px-4 py-2 rounded-lg"
+        >
+          Delete Node
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, watch } from 'vue'
+import { XMarkIcon } from '@heroicons/vue/24/outline'
+
+const emit = defineEmits(['close', 'delete', 'update'])
+
+const props = defineProps({
+  node: Object,
+})
+
+const title = ref('')
+const description = ref('')
+const attachments = ref([])
+const businessHours = ref([])
+
+watch(
+  () => props.node,
+  (newNode) => {
+    if (newNode) {
+      title.value = newNode.name || ''
+      description.value = newNode.data?.payload?.[0]?.text || newNode.data?.comment || ''
+      attachments.value =
+        newNode.data?.payload?.filter((p) => p.type === 'attachment').map((p) => p.attachment) || []
+      businessHours.value = newNode.data?.times || []
+    }
+  },
+  { immediate: true },
+)
+
+const updateNode = () => {
+  const updates = {
+    name: title.value,
+  }
+
+  if (props.node.type === 'sendMessage') {
+    updates.data = {
+      ...props.node.data,
+      payload: [
+        { type: 'text', text: description.value },
+        ...attachments.value.map((url) => ({ type: 'attachment', attachment: url })),
+      ],
+    }
+  } else if (props.node.type === 'addComment') {
+    updates.data = {
+      ...props.node.data,
+      comment: description.value,
+    }
+  } else if (props.node.type === 'businessHours') {
+    updates.data = {
+      ...props.node.data,
+      times: businessHours.value,
+    }
+  }
+
+  emit('update', props.node.id, updates)
+}
+</script>
