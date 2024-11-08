@@ -56,21 +56,4 @@ const getLabel = computed(() => {
 const timeZoneDisplay = computed(() => {
   return props.data.timezone || 'UTC'
 })
-
-const activeDays = computed(() => {
-  // eslint-disable-next-line no-constant-binary-expression
-  return [...new Set(props.data.times?.map((t) => t.day))] || []
-})
-
-const timeRangePreview = computed(() => {
-  if (!props.data.times?.length) return 'Not set'
-
-  const uniqueTimes = [...new Set(props.data.times.map((t) => `${t.startTime}-${t.endTime}`))]
-
-  return uniqueTimes.join(', ')
-})
-
-const formatDay = (day) => {
-  return day.charAt(0).toUpperCase() + day.slice(1)
-}
 </script>
