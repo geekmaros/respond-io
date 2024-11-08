@@ -1,12 +1,24 @@
-import { reactive } from 'vue'
+import { ref } from 'vue'
 
-export const useDrawer = reactive({
-  isOpen: false,
-  openDrawer() {
-    this.isOpen = true
-  },
+export function useDrawer() {
+  const isOpen = ref(false)
 
-  closeDrawer() {
-    this.isOpen = false
-  },
-})
+  const openDrawer = () => {
+    isOpen.value = true
+  }
+
+  const closeDrawer = () => {
+    isOpen.value = false
+  }
+
+  const toggleDrawer = () => {
+    isOpen.value = !isOpen.value
+  }
+
+  return {
+    isOpen,
+    openDrawer,
+    closeDrawer,
+    toggleDrawer,
+  }
+}
