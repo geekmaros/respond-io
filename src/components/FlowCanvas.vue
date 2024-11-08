@@ -9,6 +9,7 @@ import TriggerNode from '@/components/CustomNodes/TriggerNode.vue'
 import BusinessHoursNode from '@/components/CustomNodes/BusinessHoursNode.vue'
 import { MiniMap } from '@vue-flow/minimap'
 import DateTimePill from '@/components/CustomNodes/DateTimePillNode.vue'
+import AddCommentNode from '@/components/CustomNodes/AddCommentNode.vue'
 
 const store = useFlowStore()
 
@@ -40,6 +41,10 @@ onMounted(async () => {
 
       <template #node-dateTimeConnector="dateTimeConnectorNodeProps">
         <DateTimePill v-bind="dateTimeConnectorNodeProps" />
+      </template>
+
+      <template #node-addComment="addCommentNodeProps">
+        <AddCommentNode v-bind="addCommentNodeProps" />
       </template>
 
       <Controls class="bg-white shadow-lg rounded-lg" />
