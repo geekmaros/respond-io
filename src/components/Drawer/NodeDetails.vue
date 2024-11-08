@@ -2,7 +2,7 @@
   <div class="fixed right-0 top-0 h-full w-96 bg-white shadow-lg p-6 overflow-y-auto">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-xl font-bold">Node Details</h2>
-      <button @click="$emit('close')" class="text-gray-500 hover:text-gray-700">
+      <button @click="handleCloseDrawer" class="text-gray-500 hover:text-gray-700">
         <XMarkIcon class="w-6 h-6" />
       </button>
     </div>
@@ -66,7 +66,15 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
+import { useFlowStore } from '@/stores/flowStore.js'
+
+const route = useRoute()
+
+const store = useFlowStore()
+
+console.log(route.params.id)
 
 const emit = defineEmits(['close', 'delete', 'update'])
 
@@ -92,6 +100,11 @@ watch(
   },
   { immediate: true },
 )
+
+const handleCloseDrawer = () => {
+  //route to home
+  emit('close')
+}
 
 const updateNode = () => {
   const updates = {
