@@ -25,5 +25,9 @@ export const useFlowStore = defineStore('flow', () => {
     selectedNode.value = node
   }
 
-  return { nodes, edges, selectedNode, initializeStore, setSelectedNode }
+  const getNodeById = computed(() => (id) => {
+    return nodes.value.find((node) => node.id === id)
+  })
+
+  return { nodes, edges, selectedNode, initializeStore, setSelectedNode, getNodeById }
 })
