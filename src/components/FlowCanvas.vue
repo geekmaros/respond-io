@@ -8,7 +8,7 @@ import { transformFlowData } from '@/utils/transformFlowData.js'
 import TriggerNode from '@/components/CustomNodes/TriggerNode.vue'
 import BusinessHoursNode from '@/components/CustomNodes/BusinessHoursNode.vue'
 import { MiniMap } from '@vue-flow/minimap'
-import DateTimePill from '@/components/CustomNodes/DateTimePill.vue'
+import DateTimePill from '@/components/CustomNodes/DateTimePillNode.vue'
 
 const store = useFlowStore()
 
