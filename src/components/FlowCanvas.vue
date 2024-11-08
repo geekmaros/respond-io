@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { VueFlow, Panel } from '@vue-flow/core'
+import { VueFlow, Panel, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { useFlowStore } from '@/stores/flowStore.js'
 import { Controls } from '@vue-flow/controls'
@@ -16,6 +16,21 @@ const store = useFlowStore()
 
 const elements = ref([])
 
+const { fitView } = useVueFlow()
+
+const onNodeClick = (nodeMouseEvent) => {
+  const { node } = nodeMouseEvent // Destructure to get the node
+  console.log(node)
+}
+
+// const onConnect = (connection) => {
+//   flowStore.addConnection(connection)
+// }
+
+const onPaneReady = () => {
+  fitView()
+}
+
 onMounted(async () => {
   const data = await store.initializeStore()
 
@@ -28,7 +43,7 @@ onMounted(async () => {
 <template>
   <div class="h-screen w-screen">
     <!--    <VueFlow :nodes="store.nodes" :edges="store.edges">-->
-    <VueFlow v-model="elements">
+    <VueFlow v-model="elements" @node-click="onNodeClick" @paneReady="onPaneReady">
       <!--      <Panel>-->
       <!--        <button type="button" @click="addNode">Add a node</button>-->
       <!--      </Panel>-->
@@ -51,7 +66,6 @@ onMounted(async () => {
       <template #node-sendMessage="sendMessageNodeProps">
         <SendMessageNode v-bind="sendMessageNodeProps" />
       </template>
-
 
       <Controls class="bg-white shadow-lg rounded-lg" />
       <MiniMap class="bg-white shadow-lg rounded-lg" /><Controls />
