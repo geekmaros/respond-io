@@ -10,6 +10,7 @@ import BusinessHoursNode from '@/components/CustomNodes/BusinessHoursNode.vue'
 import { MiniMap } from '@vue-flow/minimap'
 import DateTimePill from '@/components/CustomNodes/DateTimePillNode.vue'
 import AddCommentNode from '@/components/CustomNodes/AddCommentNode.vue'
+import SendMessageNode from '@/components/CustomNodes/SendMessageNode.vue'
 
 const store = useFlowStore()
 
@@ -46,6 +47,11 @@ onMounted(async () => {
       <template #node-addComment="addCommentNodeProps">
         <AddCommentNode v-bind="addCommentNodeProps" />
       </template>
+
+      <template #node-sendMessage="sendMessageNodeProps">
+        <SendMessageNode v-bind="sendMessageNodeProps" />
+      </template>
+
 
       <Controls class="bg-white shadow-lg rounded-lg" />
       <MiniMap class="bg-white shadow-lg rounded-lg" /><Controls />
