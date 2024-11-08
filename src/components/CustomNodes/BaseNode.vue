@@ -105,16 +105,6 @@ function getMessagePreview(payload) {
   const textMessages = payload.filter((p) => p.type === 'text')
   return textMessages.length > 0 ? textMessages[0].text : ''
 }
-
-function onNodeClick(event) {
-  // Stop the event from bubbling up to prevent multiple clicks
-  event.stopPropagation()
-  emit('click', {
-    id: props.id,
-    data: props.data,
-    type: props.data.type,
-  })
-}
 </script>
 
 <style scoped>
