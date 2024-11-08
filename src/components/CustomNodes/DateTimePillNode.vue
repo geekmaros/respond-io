@@ -29,10 +29,6 @@ const props = defineProps({
   },
 })
 
-const getTriggerType = computed(() => {
-  return props.data.type === 'conversationOpened' ? 'Conversation Opened' : props.data.type
-})
-
 const getLabel = computed(() => {
   return props.data.label
 })

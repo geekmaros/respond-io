@@ -22,7 +22,7 @@
         <div class="text-sm text-gray-700 capitalize font-semibold">{{ getLabel }}</div>
       </div>
 
-      <div class="text-xs text-gray-400 text-center py-3 p-4">
+      <div class="text-sm text-gray-400 text-center py-3 p-4">
         {{ getLabel }} - {{ timeZoneDisplay }}
       </div>
     </div>
