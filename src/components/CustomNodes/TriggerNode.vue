@@ -50,11 +50,4 @@ const getTriggerType = computed(() => {
 const getLabel = computed(() => {
   return props.data.label
 })
-
-const getTriggerDescription = computed(() => {
-  if (props.data.type === 'conversationOpened') {
-    return props.data.oncePerContact ? 'Triggers once per contact' : 'Triggers every time'
-  }
-  return ''
-})
 </script>
