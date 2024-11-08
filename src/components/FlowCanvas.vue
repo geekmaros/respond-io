@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { VueFlow, Panel, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
@@ -59,7 +59,33 @@ onMounted(async () => {
   const data = await store.initializeStore()
 
   elements.value = transformFlowData(data)
+
+  // load data from store if there is a param id
+  if (router.currentRoute.value.params.id) {
+    const node = store.getNodeById(router.currentRoute.value.params.id)
+    if (node) {
+      store.setSelectedNode(node)
+      openDrawer()
+    }
+  }
 })
+
+//look for changes in the url and opend the drawer accordingly
+// watch(
+//   () => router.currentRoute.value.params.id,
+//   (newId) => {
+//     if (newId) {
+//       console.log(newId)
+//       const node = store.getNodeById(newId)
+//       if (node) {
+//         store.setSelectedNode(node)
+//         openDrawer()
+//       }
+//     } else {
+//       closeDrawer()
+//     }
+//   },
+// )
 </script>
 
 <template>
@@ -94,7 +120,7 @@ onMounted(async () => {
       <Background variant="dots" />
     </VueFlow>
     <transition name="drawer">
-      <NodeDetails  @close="handleCloseDrawer" v-if="isOpen" :node="store.selectedNode" />
+      <NodeDetails @close="handleCloseDrawer" v-if="isOpen" :node="store.selectedNode" />
     </transition>
   </div>
 </template>

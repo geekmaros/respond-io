@@ -66,15 +66,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
-import { useFlowStore } from '@/stores/flowStore.js'
-
-const route = useRoute()
-
-const store = useFlowStore()
-
-console.log(route.params.id)
 
 const emit = defineEmits(['close', 'delete', 'update'])
 
@@ -86,6 +78,13 @@ const title = ref('')
 const description = ref('')
 const attachments = ref([])
 const businessHours = ref([])
+
+// const setNodeDetails = (node) => {
+//   title.value = node.name || '';
+//   description.value = node.data?.payload?.[0]?.text || node.data?.comment || '';
+//   attachments.value = node.data?.payload?.filter((p) => p.type === 'attachment').map((p) => p.attachment) || [];
+//   businessHours.value = node.data?.times || [];
+// };
 
 watch(
   () => props.node,
@@ -102,7 +101,6 @@ watch(
 )
 
 const handleCloseDrawer = () => {
-  //route to home
   emit('close')
 }
 
