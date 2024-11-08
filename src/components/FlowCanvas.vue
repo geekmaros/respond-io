@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { VueFlow, Panel, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { useFlowStore } from '@/stores/flowStore.js'
@@ -11,6 +12,12 @@ import { MiniMap } from '@vue-flow/minimap'
 import DateTimePill from '@/components/CustomNodes/DateTimePillNode.vue'
 import AddCommentNode from '@/components/CustomNodes/AddCommentNode.vue'
 import SendMessageNode from '@/components/CustomNodes/SendMessageNode.vue'
+import NodeDetails from '@/components/Drawer/NodeDetails.vue'
+import { useDrawer } from '@/composables/drawer.js'
+
+const { isOpen, openDrawer, closeDrawer } = useDrawer()
+
+const router = useRouter()
 
 const store = useFlowStore()
 
@@ -19,8 +26,20 @@ const elements = ref([])
 const { fitView } = useVueFlow()
 
 const onNodeClick = (nodeMouseEvent) => {
-  const { node } = nodeMouseEvent // Destructure to get the node
-  console.log(node)
+  const {
+    node: { id, type, data },
+  } = nodeMouseEvent // Destructure to get the node
+  // console.log(node)
+
+  if (type !== 'dateTimeConnector') {
+    //set node as selected
+    store.setSelectedNode({ id, type, data })
+    //set URL
+    router.push({ name: 'detail', params: { id: id } })
+
+    // //open drawer
+    openDrawer()
+  }
 }
 
 // const onConnect = (connection) => {
@@ -31,12 +50,15 @@ const onPaneReady = () => {
   fitView()
 }
 
+const handleCloseDrawer = () => {
+  closeDrawer()
+  router.push({ name: 'home' })
+}
+
 onMounted(async () => {
   const data = await store.initializeStore()
 
   elements.value = transformFlowData(data)
-
-  console.log(elements.value)
 })
 </script>
 
@@ -71,5 +93,32 @@ onMounted(async () => {
       <MiniMap class="bg-white shadow-lg rounded-lg" /><Controls />
       <Background variant="dots" />
     </VueFlow>
+    <transition name="drawer">
+      <NodeDetails  @close="handleCloseDrawer" v-if="isOpen" :node="store.selectedNode" />
+    </transition>
   </div>
 </template>
+<style scoped>
+.drawer-enter-active,
+.drawer-leave-active {
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+.drawer-enter-from {
+  transform: translateX(100%);
+  opacity: 0;
+}
+.drawer-enter-to {
+  transform: translateX(0);
+  opacity: 1;
+}
+.drawer-leave-from {
+  transform: translateX(0);
+  opacity: 1;
+}
+.drawer-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
+}
+</style>
