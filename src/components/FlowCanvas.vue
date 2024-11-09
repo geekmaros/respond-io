@@ -55,6 +55,14 @@ const handleCloseDrawer = () => {
   router.push({ name: 'home' })
 }
 
+const handleDelete = (nodeId) => {
+  //TODO: for weird reasons trigger not deleted
+  const updatedData = store.removeNode(nodeId)
+  elements.value = transformFlowData(updatedData)
+  closeDrawer()
+  router.push({ name: 'home' })
+}
+
 onMounted(async () => {
   const data = await store.initializeStore()
 
@@ -67,10 +75,24 @@ onMounted(async () => {
       store.setSelectedNode(node)
       openDrawer()
     }
+    onMounted(async () => {
+      const data = await store.initializeStore()
+
+      elements.value = transformFlowData(data)
+
+      // load data from store if there is a param id
+      if (router.currentRoute.value.params.id) {
+        const node = store.getNodeById(router.currentRoute.value.params.id)
+        if (node) {
+          store.setSelectedNode(node)
+          openDrawer()
+        }
+      }
+    })
   }
 })
 
-//look for changes in the url and opend the drawer accordingly
+//look for changes in the
 // watch(
 //   () => router.currentRoute.value.params.id,
 //   (newId) => {
@@ -120,7 +142,12 @@ onMounted(async () => {
       <Background variant="dots" />
     </VueFlow>
     <transition name="drawer">
-      <NodeDetails @close="handleCloseDrawer" v-if="isOpen" :node="store.selectedNode" />
+      <NodeDetails
+        @close="handleCloseDrawer"
+        @delete="handleDelete"
+        v-if="isOpen"
+        :node="store.selectedNode"
+      />
     </transition>
   </div>
 </template>
