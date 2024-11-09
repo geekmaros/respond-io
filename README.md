@@ -1,5 +1,5 @@
 
-# Respond.ai Frontend Technical Assessment - Flow Chart Application
+# Respond.io Frontend Technical Assessment - Flow Chart Application
 
 This is a frontend technical assessment project for [Respond.ai](https://respond.io/), implementing a flow chart based on a dataset provided in `data.json` within the `public` folder.
 
