@@ -8,34 +8,18 @@
     </div>
 
     <div class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Title</label>
-        <input
-          v-model="title"
-          class="mt-1 w-full rounded-md border-gray-500 shadow-sm p-2"
-          @change="updateNode"
-        />
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Description</label>
-        <textarea
-          v-model="description"
-          class="mt-1 w-full rounded-md border-gray-900 shadow-sm p-2"
-          @change="updateNode"
-        />
-      </div>
+      <template v-if="node.type === 'addComment'">
+        <!-- Add Comment Section -->
+        <AddCommentForm :node-data="node" @update="handleUpdateNode" />
+      </template>
 
       <template v-if="node.type === 'sendMessage'">
-        <div class="p-4">
-          <!-- Send Message Section -->
-          <div v-if="node.type === 'sendMessage'">
-            <SendMessageForm :node-data="node" @update="handleUpdateNode" />
-          </div>
-        </div>
+        <!--        Send Message -->
+        <SendMessageForm :node-data="node" @update="handleUpdateNode" />
       </template>
 
       <template v-if="node.type === 'dateTime'">
+        <!-- Business Hours Section -->
         <BusinessHoursForm :node-data="node" @update="handleUpdateNode" />
       </template>
 
@@ -52,10 +36,11 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+// import { ref, watch, onMounted } from 'vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import SendMessageForm from '@/components/Drawer/Forms/SendMessageForm.vue'
 import BusinessHoursForm from '@/components/Drawer/Forms/BusinessHoursForm.vue'
+import AddCommentForm from '@/components/Drawer/Forms/AddCommentForm.vue'
 
 const emit = defineEmits(['close', 'delete', 'update'])
 
@@ -63,81 +48,11 @@ const props = defineProps({
   node: Object,
 })
 
-const title = ref('')
-const description = ref('')
-const attachments = ref([])
-const businessHours = ref([])
-
-// const setNodeDetails = (node) => {
-//   title.value = node.name || '';
-//   description.value = node.data?.payload?.[0]?.text || node.data?.comment || '';
-//   attachments.value = node.data?.payload?.filter((p) => p.type === 'attachment').map((p) => p.attachment) || [];
-//   businessHours.value = node.data?.times || [];
-// };
-
 const handleCloseDrawer = () => {
   emit('close')
 }
 
-const initializeNodeDetails = (node) => {
-  if (!node) return
-
-  // Set title
-  title.value = node.data?.name || ''
-
-  // Set description based on node type
-  if (node.type === 'sendMessage') {
-    description.value = node.data?.payload?.[0]?.text || ''
-    attachments.value =
-      node.data?.payload?.filter((p) => p.type === 'attachment').map((p) => p.attachment) || []
-  } else if (node.type === 'addComment') {
-    description.value = node.data?.comment || ''
-  } else if (node.type === 'dateTime') {
-    description.value = ''
-    businessHours.value = node.data?.times || []
-  }
-}
-
-// const updateNode = () => {
-//   const updates = {
-//     name: title.value,
-//   }
-//
-//   if (props.node.type === 'sendMessage') {
-//     updates.data = {
-//       ...props.node.data,
-//       payload: [
-//         { type: 'text', text: description.value },
-//         ...attachments.value.map((url) => ({ type: 'attachment', attachment: url })),
-//       ],
-//     }
-//   } else if (props.node.type === 'addComment') {
-//     updates.data = {
-//       ...props.node.data,
-//       comment: description.value,
-//     }
-//   } else if (props.node.type === 'businessHours') {
-//     updates.data = {
-//       ...props.node.data,
-//       times: businessHours.value,
-//     }
-//   }
-//
-//   emit('update', props.node.id, updates)
-// }
-
 const handleUpdateNode = (updatedData) => {
   emit('update', props.node.id, updatedData)
 }
-onMounted(() => {
-  initializeNodeDetails(props.node)
-})
-
-watch(
-  () => props.node,
-  (newNode) => {
-    initializeNodeDetails(newNode)
-  },
-  { immediate: true, deep: true },
-)
 </script>
