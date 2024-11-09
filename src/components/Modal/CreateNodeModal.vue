@@ -143,7 +143,7 @@ const nodeTypes = [
     iconColor: 'text-green-600',
   },
   {
-    value: 'businessHours',
+    value: 'dateTime',
     label: 'Business Hours',
     description: 'Set up business hours and time-based routing',
     icon: ClockIcon,
@@ -196,9 +196,10 @@ const initializeNodeData = (type) => {
         label: form.value.title,
         comment: form.value.description || '',
       }
-    case 'businessHours':
+    case 'dateTime':
       return {
         timezone: 'UTC',
+        label: form.value.title,
         times: [
           { startTime: '09:00', endTime: '17:00', day: 'mon' },
           { startTime: '09:00', endTime: '17:00', day: 'tue' },

@@ -33,9 +33,8 @@ const onNodeClick = (nodeMouseEvent) => {
   const {
     node: { id, type, data },
   } = nodeMouseEvent // Destructure to get the node
-  // console.log(node)
 
-  if (type !== 'dateTimeConnector') {
+  if (type !== 'dateTimeConnector' && type !== 'trigger') {
     //set node as selected
     store.setSelectedNode({ id, type, data })
     //set URL
@@ -75,7 +74,6 @@ const onNodeClick = (nodeMouseEvent) => {
 // }
 
 const handleCreateNode = (nodeData) => {
-
   //TODO: can still be modified if it does not need to be connected
   // First create the new node
   const newNode = {
@@ -233,5 +231,16 @@ onMounted(async () => {
 .drawer-leave-to {
   transform: translateX(100%);
   opacity: 0;
+}
+.animated-node {
+  transition: all 0.3s ease-in-out;
+}
+
+.vue-flow__node {
+  transition: transform 0.3s ease-in-out;
+}
+
+.vue-flow__edge {
+  transition: all 0.3s ease-in-out;
 }
 </style>
