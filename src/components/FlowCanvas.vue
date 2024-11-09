@@ -14,6 +14,8 @@ import AddCommentNode from '@/components/CustomNodes/AddCommentNode.vue'
 import SendMessageNode from '@/components/CustomNodes/SendMessageNode.vue'
 import NodeDetails from '@/components/Drawer/NodeDetails.vue'
 import { useDrawer } from '@/composables/drawer.js'
+import CreateNodeModal from '@/components/Modal/CreateNodeModal.vue'
+import CreateNodeButton from '@/components/Modal/CreateNodeButton.vue'
 
 const { isOpen, openDrawer, closeDrawer } = useDrawer()
 
@@ -22,6 +24,8 @@ const router = useRouter()
 const store = useFlowStore()
 
 const elements = ref([])
+
+const showCreateModal = ref(false)
 
 const { fitView } = useVueFlow()
 
@@ -40,6 +44,34 @@ const onNodeClick = (nodeMouseEvent) => {
     // //open drawer
     openDrawer()
   }
+}
+
+const handleCreateNode = (nodeData) => {
+  // const updatedData = store.addNode(nodeData)
+  // elements.value = transformFlowData(updatedData)
+  // closeDrawer()
+  // router.push({ name: 'home' })
+
+  // Calculate position for new node (e.g., center of viewport)
+  const position = {
+    x: window.innerWidth / 20,
+    y: window.innerHeight / 20,
+  }
+
+  // Create the new node
+  const newNode = {
+    id: nodeData.id,
+    type: nodeData.type,
+    position,
+    data: {
+      name: nodeData.label,
+      ...nodeData.data,
+    },
+  }
+
+  // Add node to store
+  const updatedData = store.createNode(newNode)
+  elements.value = transformFlowData(updatedData)
 }
 
 // const onConnect = (connection) => {
@@ -82,23 +114,6 @@ onMounted(async () => {
     }
   }
 })
-
-//look for changes in the
-// watch(
-//   () => router.currentRoute.value.params.id,
-//   (newId) => {
-//     if (newId) {
-//       console.log(newId)
-//       const node = store.getNodeById(newId)
-//       if (node) {
-//         store.setSelectedNode(node)
-//         openDrawer()
-//       }
-//     } else {
-//       closeDrawer()
-//     }
-//   },
-// )
 </script>
 
 <template>
@@ -132,6 +147,13 @@ onMounted(async () => {
       <MiniMap class="bg-white shadow-lg rounded-lg" /><Controls />
       <Background variant="dots" />
     </VueFlow>
+
+    <CreateNodeButton @click="showCreateModal = true" />
+    <CreateNodeModal
+      :is-open="showCreateModal"
+      @close="showCreateModal = false"
+      @create="handleCreateNode"
+    />
     <transition name="drawer">
       <NodeDetails
         @close="handleCloseDrawer"

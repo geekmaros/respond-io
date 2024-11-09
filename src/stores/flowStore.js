@@ -69,9 +69,28 @@ export const useFlowStore = defineStore('flow', () => {
     }
   }
 
+  function addConnection(connection) {
+    const newEdge = {
+      id: `e${connection.source}-${connection.target}`,
+      source: connection.source,
+      target: connection.target,
+    }
+    edges.value.push(newEdge)
+  }
+
+  function createNode(nodeData) {
+    nodes.value.push(nodeData)
+    return {
+      nodes: nodes.value,
+      edges: edges.value,
+    }
+  }
+
   return {
     nodes,
     edges,
+    createNode,
+    addConnection,
     selectedNode,
     initializeStore,
     setSelectedNode,
