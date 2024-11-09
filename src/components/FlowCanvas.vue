@@ -5,7 +5,7 @@ import { VueFlow, Panel, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { useFlowStore } from '@/stores/flowStore.js'
 import { Controls } from '@vue-flow/controls'
-import { transformFlowData } from '@/utils/transformFlowData.js'
+import { getLayoutedElements, transformFlowData } from '@/utils/transformFlowData.js'
 import TriggerNode from '@/components/CustomNodes/TriggerNode.vue'
 import BusinessHoursNode from '@/components/CustomNodes/BusinessHoursNode.vue'
 import { MiniMap } from '@vue-flow/minimap'
@@ -46,31 +46,80 @@ const onNodeClick = (nodeMouseEvent) => {
   }
 }
 
+// const handleCreateNode = (nodeData) => {
+//   // const updatedData = store.addNode(nodeData)
+//   // elements.value = transformFlowData(updatedData)
+//   // closeDrawer()
+//   // router.push({ name: 'home' })
+//
+//   // Calculate position for new node (e.g., center of viewport)
+//   const position = {
+//     x: window.innerWidth / 20,
+//     y: window.innerHeight / 20,
+//   }
+//
+//   // Create the new node
+//   const newNode = {
+//     id: nodeData.id,
+//     type: nodeData.type,
+//     position,
+//     data: {
+//       name: nodeData.label,
+//       ...nodeData.data,
+//     },
+//   }
+//
+//   // Add node to store
+//   const updatedData = store.createNode(newNode)
+//   elements.value = transformFlowData(updatedData)
+// }
+
 const handleCreateNode = (nodeData) => {
-  // const updatedData = store.addNode(nodeData)
-  // elements.value = transformFlowData(updatedData)
-  // closeDrawer()
-  // router.push({ name: 'home' })
 
-  // Calculate position for new node (e.g., center of viewport)
-  const position = {
-    x: window.innerWidth / 20,
-    y: window.innerHeight / 20,
-  }
-
-  // Create the new node
+  //TODO: can still be modified if it does not need to be connected
+  // First create the new node
   const newNode = {
     id: nodeData.id,
     type: nodeData.type,
-    position,
+    // Initial position doesn't matter as dagre will calculate it
+    position: { x: 0, y: 0 },
     data: {
       name: nodeData.label,
       ...nodeData.data,
     },
   }
 
-  // Add node to store
-  const updatedData = store.createNode(newNode)
+  // Add the new node to the existing nodes
+  const updatedNodes = [...store.nodes, newNode]
+
+  // Create edges if needed (e.g., connecting to the previous node)
+  const lastNode = store.nodes[store.nodes.length - 1]
+  let updatedEdges = [...store.edges]
+
+  if (lastNode) {
+    const newEdge = {
+      id: `e${lastNode.id}-${newNode.id}`,
+      source: lastNode.id,
+      target: newNode.id,
+    }
+    updatedEdges.push(newEdge)
+  }
+
+  // Get the layouted elements
+  const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+    updatedNodes,
+    updatedEdges,
+    'TB', // Top to Bottom direction
+  )
+
+  // Update the store with the new layout
+  store.nodes = layoutedNodes
+  store.edges = layoutedEdges
+
+  const updatedData = {
+    nodes: layoutedNodes,
+    edges: layoutedEdges,
+  }
   elements.value = transformFlowData(updatedData)
 }
 
