@@ -46,7 +46,6 @@ export const useFlowStore = defineStore('flow', () => {
   })
 
   function updateNodeData(nodeId, newData) {
-    console.log(nodeId, newData)
     const nodeIndex = nodes.value.findIndex((node) => node.id === nodeId)
 
     if (nodeIndex !== -1) {
