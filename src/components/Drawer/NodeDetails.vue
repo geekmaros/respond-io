@@ -36,14 +36,7 @@
       </template>
 
       <template v-if="node.type === 'dateTime'">
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700">Business Hours</label>
-          <div v-for="day in businessHours" :key="day.day" class="flex gap-2">
-            <span class="w-20">{{ day.day }}</span>
-            <input type="time" v-model="day.startTime" class="border rounded" />
-            <input type="time" v-model="day.endTime" class="border rounded" />
-          </div>
-        </div>
+        <BusinessHoursForm :node-data="node" @update="handleUpdateNode" />
       </template>
 
       <div class="pt-4">
@@ -62,6 +55,7 @@
 import { ref, watch, onMounted } from 'vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import SendMessageForm from '@/components/Drawer/Forms/SendMessageForm.vue'
+import BusinessHoursForm from '@/components/Drawer/Forms/BusinessHoursForm.vue'
 
 const emit = defineEmits(['close', 'delete', 'update'])
 
