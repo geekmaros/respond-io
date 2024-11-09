@@ -26,13 +26,10 @@ export const useFlowStore = defineStore('flow', () => {
   }
 
   function removeNode(nodeId) {
-    // Clear selected node if removing selected node
+    // Clear or nulify the selected node if removing selected node
     if (selectedNode.value?.id === nodeId) {
       selectedNode.value = null
     }
-
-    console.log('ereach here for trigger')
-
     // Remove node from store
     nodes.value = nodes.value.filter((node) => node.id !== nodeId)
     edges.value = edges.value.filter((edge) => edge.source !== nodeId && edge.target !== nodeId)
@@ -48,6 +45,31 @@ export const useFlowStore = defineStore('flow', () => {
     return nodes.value.find((node) => node.id === id)
   })
 
+  function updateNodeData(nodeId, newData) {
+    console.log(nodeId, newData)
+    const nodeIndex = nodes.value.findIndex((node) => node.id === nodeId)
+
+    if (nodeIndex !== -1) {
+      nodes.value[nodeIndex] = {
+        ...nodes.value[nodeIndex],
+        data: {
+          ...nodes.value[nodeIndex].data,
+          ...newData,
+        },
+      }
+
+      // Update selected node if it's the one being modified
+      if (selectedNode.value?.id === nodeId) {
+        selectedNode.value = nodes.value[nodeIndex]
+      }
+
+      return {
+        nodes: nodes.value,
+        edges: edges.value,
+      }
+    }
+  }
+
   return {
     nodes,
     edges,
@@ -56,5 +78,6 @@ export const useFlowStore = defineStore('flow', () => {
     setSelectedNode,
     getNodeById,
     removeNode,
+    updateNodeData,
   }
 })

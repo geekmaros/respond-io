@@ -12,7 +12,7 @@
         <label class="block text-sm font-medium text-gray-700">Title</label>
         <input
           v-model="title"
-          class="mt-1 w-full rounded-md border-gray-500 shadow-sm"
+          class="mt-1 w-full rounded-md border-gray-500 shadow-sm p-2"
           @change="updateNode"
         />
       </div>
@@ -21,27 +21,21 @@
         <label class="block text-sm font-medium text-gray-700">Description</label>
         <textarea
           v-model="description"
-          class="mt-1 w-full rounded-md border-gray-900 shadow-sm"
+          class="mt-1 w-full rounded-md border-gray-900 shadow-sm p-2"
           @change="updateNode"
         />
       </div>
 
       <template v-if="node.type === 'sendMessage'">
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700">Attachments</label>
-          <div class="grid grid-cols-2 gap-2">
-            <div
-              v-for="(attachment, index) in attachments"
-              :key="index"
-              class="relative aspect-square bg-gray-100 rounded-lg overflow-hidden"
-            >
-              <img :src="attachment" class="w-full h-full object-cover" />
-            </div>
+        <div class="p-4">
+          <!-- Send Message Section -->
+          <div v-if="node.type === 'sendMessage'">
+            <SendMessageForm :node-data="node" @update="handleUpdateNode" />
           </div>
         </div>
       </template>
 
-      <template v-if="node.type === 'businessHours'">
+      <template v-if="node.type === 'dateTime'">
         <div class="space-y-2">
           <label class="block text-sm font-medium text-gray-700">Business Hours</label>
           <div v-for="day in businessHours" :key="day.day" class="flex gap-2">
@@ -65,8 +59,9 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
+import SendMessageForm from '@/components/Drawer/Forms/SendMessageForm.vue'
 
 const emit = defineEmits(['close', 'delete', 'update'])
 
@@ -86,49 +81,69 @@ const businessHours = ref([])
 //   businessHours.value = node.data?.times || [];
 // };
 
-watch(
-  () => props.node,
-  (newNode) => {
-    if (newNode) {
-      title.value = newNode.name || ''
-      description.value = newNode.data?.payload?.[0]?.text || newNode.data?.comment || ''
-      attachments.value =
-        newNode.data?.payload?.filter((p) => p.type === 'attachment').map((p) => p.attachment) || []
-      businessHours.value = newNode.data?.times || []
-    }
-  },
-  { immediate: true },
-)
-
 const handleCloseDrawer = () => {
   emit('close')
 }
 
-const updateNode = () => {
-  const updates = {
-    name: title.value,
-  }
+const initializeNodeDetails = (node) => {
+  if (!node) return
 
-  if (props.node.type === 'sendMessage') {
-    updates.data = {
-      ...props.node.data,
-      payload: [
-        { type: 'text', text: description.value },
-        ...attachments.value.map((url) => ({ type: 'attachment', attachment: url })),
-      ],
-    }
-  } else if (props.node.type === 'addComment') {
-    updates.data = {
-      ...props.node.data,
-      comment: description.value,
-    }
-  } else if (props.node.type === 'businessHours') {
-    updates.data = {
-      ...props.node.data,
-      times: businessHours.value,
-    }
-  }
+  // Set title
+  title.value = node.data?.name || ''
 
-  emit('update', props.node.id, updates)
+  // Set description based on node type
+  if (node.type === 'sendMessage') {
+    description.value = node.data?.payload?.[0]?.text || ''
+    attachments.value =
+      node.data?.payload?.filter((p) => p.type === 'attachment').map((p) => p.attachment) || []
+  } else if (node.type === 'addComment') {
+    description.value = node.data?.comment || ''
+  } else if (node.type === 'dateTime') {
+    description.value = ''
+    businessHours.value = node.data?.times || []
+  }
 }
+
+// const updateNode = () => {
+//   const updates = {
+//     name: title.value,
+//   }
+//
+//   if (props.node.type === 'sendMessage') {
+//     updates.data = {
+//       ...props.node.data,
+//       payload: [
+//         { type: 'text', text: description.value },
+//         ...attachments.value.map((url) => ({ type: 'attachment', attachment: url })),
+//       ],
+//     }
+//   } else if (props.node.type === 'addComment') {
+//     updates.data = {
+//       ...props.node.data,
+//       comment: description.value,
+//     }
+//   } else if (props.node.type === 'businessHours') {
+//     updates.data = {
+//       ...props.node.data,
+//       times: businessHours.value,
+//     }
+//   }
+//
+//   emit('update', props.node.id, updates)
+// }
+
+const handleUpdateNode = (updatedData) => {
+  emit('update', props.node.id, updatedData)
+}
+onMounted(() => {
+  initializeNodeDetails(props.node)
+})
+
+watch(
+  () => props.node,
+  (newNode) => {
+    initializeNodeDetails(newNode)
+  },
+  { immediate: true, deep: true },
+)
 </script>

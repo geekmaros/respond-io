@@ -55,12 +55,17 @@ const handleCloseDrawer = () => {
   router.push({ name: 'home' })
 }
 
-const handleDelete = (nodeId) => {
+const handleNodeDelete = (nodeId) => {
   //TODO: for weird reasons trigger not deleted
   const updatedData = store.removeNode(nodeId)
   elements.value = transformFlowData(updatedData)
   closeDrawer()
   router.push({ name: 'home' })
+}
+
+const handleNodeUpdate = (nodeId, newData) => {
+  const updatedData = store.updateNodeData(nodeId, newData)
+  elements.value = transformFlowData(updatedData)
 }
 
 onMounted(async () => {
@@ -75,20 +80,6 @@ onMounted(async () => {
       store.setSelectedNode(node)
       openDrawer()
     }
-    onMounted(async () => {
-      const data = await store.initializeStore()
-
-      elements.value = transformFlowData(data)
-
-      // load data from store if there is a param id
-      if (router.currentRoute.value.params.id) {
-        const node = store.getNodeById(router.currentRoute.value.params.id)
-        if (node) {
-          store.setSelectedNode(node)
-          openDrawer()
-        }
-      }
-    })
   }
 })
 
@@ -144,7 +135,8 @@ onMounted(async () => {
     <transition name="drawer">
       <NodeDetails
         @close="handleCloseDrawer"
-        @delete="handleDelete"
+        @delete="handleNodeDelete"
+        @update="handleNodeUpdate"
         v-if="isOpen"
         :node="store.selectedNode"
       />
