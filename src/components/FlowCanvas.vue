@@ -75,7 +75,7 @@ const handleCreateNode = (nodeData) => {
 }
 
 // const onConnect = (connection) => {
-//   flowStore.addConnection(connection)
+//   store.addConnection(connection)
 // }
 
 const onPaneReady = () => {
@@ -120,9 +120,6 @@ onMounted(async () => {
   <div class="h-screen w-screen">
     <!--    <VueFlow :nodes="store.nodes" :edges="store.edges">-->
     <VueFlow v-model="elements" @node-click="onNodeClick" @paneReady="onPaneReady">
-      <!--      <Panel>-->
-      <!--        <button type="button" @click="addNode">Add a node</button>-->
-      <!--      </Panel>-->
       <template #node-trigger="triggerNodeProps">
         <TriggerNode v-bind="triggerNodeProps" />
       </template>
