@@ -63,9 +63,9 @@ const timezones = [
 <template>
   <div class="space-y-6">
     <!-- Business Hours Header -->
-    <div class="flex items-center justify-between">
-      <h3 class="text-lg font-medium text-gray-900">Business Hours</h3>
+    <div class="flex space-x-1 items-center">
       <ClockIcon class="w-5 h-5 text-gray-400" />
+      <h3 class="text-lg font-medium text-gray-900">Business Hours</h3>
     </div>
 
     <!-- Timezone Selection -->

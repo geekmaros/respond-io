@@ -84,7 +84,7 @@ const updateNode = () => {
     <!-- Text Messages Section -->
     <div class="space-y-4">
       <div class="flex justify-between items-center">
-        <label class="block text-sm font-medium text-gray-700"> Messages </label>
+        <label class="block text-lg font-medium text-gray-700"> Messages </label>
         <button
           type="button"
           @click="addMessage"
