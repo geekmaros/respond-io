@@ -1,4 +1,3 @@
-# src/components/FlowChart/drawer-forms/DateTimeForm.vue
 <script setup>
 import { ref } from 'vue'
 import { ClockIcon } from '@heroicons/vue/24/outline'

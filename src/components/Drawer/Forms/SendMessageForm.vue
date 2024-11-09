@@ -1,4 +1,3 @@
-# src/components/FlowChart/drawer-forms/SendMessageForm.vue
 <script setup>
 import { ref, watchEffect } from 'vue'
 import { TrashIcon, PlusIcon } from '@heroicons/vue/24/outline'
