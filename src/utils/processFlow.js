@@ -25,8 +25,5 @@ export const processFlowData = (data) => {
     }
   })
 
-  return {
-    nodes: processedNodes,
-    edges: processedEdges,
-  }
+  return { nodes: processedNodes, edges: processedEdges }
 }
